@@ -1,14 +1,30 @@
-# Production Ready CRUD API
+# Production-Ready CRUD API
 
-## Live URL
-https://your-app.onrender.com
+## Live Deployment URL
+https://user-crud-api.onrender.com
 
-## Swagger Docs
-https://your-app.onrender.com/api-docs
+## Swagger Documentation URL
+https://user-crud-api.onrender.com/api-docs
 
-## Environment Variables
+## GitHub Repository
+<PASTE YOUR GITHUB REPO LINK HERE>
+
+## Required Environment Variables
 PORT
 
-## Local Setup
-npm install
-npm start# lu--assignment
+## Local Setup Instructions
+
+npm install  
+npm start
+
+## Description
+This project is a production-ready CRUD API built using Node.js and Express.  
+It includes centralized error handling, Swagger API documentation, and a Postman test suite for all CRUD operations.
+
+Features:
+- Create User
+- Read Users
+- Update User
+- Delete User
+- Global Error Handling
+- Swagger Documentation
