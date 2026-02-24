@@ -1,7 +1,7 @@
 import express from "express";
-const router = express.Router();
+import User from "../models/User.js";
 
-let users = [];
+const router = express.Router();
 
 /**
  * @swagger
@@ -12,8 +12,13 @@ let users = [];
  *       200:
  *         description: Success
  */
-router.get("/", (req, res) => {
-  res.status(200).json(users);
+router.get("/", async (req, res, next) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    next(error);
+  }
 });
 
 /**
@@ -21,31 +26,20 @@ router.get("/", (req, res) => {
  * /api/users:
  *   post:
  *     summary: Create user
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *     responses:
- *       201:
- *         description: Created
- *       400:
- *         description: Validation Error
  */
-router.post("/", (req, res) => {
-  if (!req.body.name) {
-    const error = new Error("Name required");
-    error.statusCode = 400;
-    throw error;
-  }
+router.post("/", async (req, res, next) => {
+  try {
+    if (!req.body.name) {
+      const error = new Error("Name is required");
+      error.statusCode = 400;
+      throw error;
+    }
 
-  const user = { id: Date.now(), name: req.body.name };
-  users.push(user);
-  res.status(201).json(user);
+    const user = await User.create({ name: req.body.name });
+    res.status(201).json(user);
+  } catch (error) {
+    next(error);
+  }
 });
 
 /**
@@ -54,15 +48,23 @@ router.post("/", (req, res) => {
  *   put:
  *     summary: Update user
  */
-router.put("/:id", (req, res) => {
-  const user = users.find(u => u.id == req.params.id);
-  if (!user) {
-    const error = new Error("User not found");
-    error.statusCode = 404;
-    throw error;
+router.put("/:id", async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      const error = new Error("User not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    user.name = req.body.name || user.name;
+    await user.save();
+
+    res.json(user);
+  } catch (error) {
+    next(error);
   }
-  user.name = req.body.name;
-  res.json(user);
 });
 
 /**
@@ -71,9 +73,21 @@ router.put("/:id", (req, res) => {
  *   delete:
  *     summary: Delete user
  */
-router.delete("/:id", (req, res) => {
-  users = users.filter(u => u.id != req.params.id);
-  res.json({ message: "Deleted" });
+router.delete("/:id", async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      const error = new Error("User not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    await user.deleteOne();
+    res.json({ message: "User deleted" });
+  } catch (error) {
+    next(error);
+  }
 });
 
 export default router;

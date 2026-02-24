@@ -6,8 +6,7 @@ const options = {
     openapi: "3.0.0",
     info: {
       title: "User CRUD API",
-      version: "1.0.0",
-      description: "Production Ready CRUD API"
+      version: "1.0.0"
     },
     servers: [
       { url: "http://localhost:5000" }
